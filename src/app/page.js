@@ -8,38 +8,58 @@ export default function Home() {
   const [qrCodeUrl, setQrCodeUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [message, setMessage] = useState(""); // For handling existing QR code messages
-  const [imgError, setImgError] = useState(false); // Track if the image failed to load
+  const [message, setMessage] = useState("");
+  const [imgError, setImgError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
+
+  // Backend URL from environment variable
+  const backendUrl =
+    process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+
+  const validateUrl = (url) => {
+    const urlPattern =
+      /^(https?:\/\/)?[\w.-]+(\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
+    return urlPattern.test(url);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    setMessage(""); // Reset the message
+    setMessage("");
+    setQrCodeUrl("");
+    setImgError(false);
+
+    if (!validateUrl(url)) {
+      setError("Please enter a valid URL.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await axios.post("http://localhost:8000/generate-qr/", {
-        url: url,
-      });
+      const response = await axios.post(`${backendUrl}/generate-qr/`, { url });
 
-      console.log("QR code URL:", response.data.qr_code_url); // Log the URL
-
-      // If the response contains a message, display it
       if (response.data.message) {
         setMessage(response.data.message);
       }
 
-      setQrCodeUrl(response.data.qr_code_url); // Set the QR code URL
+      setQrCodeUrl(response.data.qr_code_url);
+      setImageLoading(true);
     } catch (error) {
       console.error("Error generating QR Code:", error);
       setError("Failed to generate QR Code. Please try again.");
     } finally {
       setLoading(false);
     }
-};
+  };
 
+  const handleImageLoad = () => {
+    setImageLoading(false);
+  };
 
   const handleImageError = () => {
-    setImgError(true); // Set flag to true when image fails to load
+    setImgError(true);
+    setImageLoading(false);
   };
 
   return (
@@ -57,22 +77,35 @@ export default function Home() {
           {loading ? "Generating..." : "Generate QR Code"}
         </button>
       </form>
-      
-      {/* Display the message if QR code exists */}
-      {message && <p style={styles.message}>{message}</p>} 
-      
-      {error && <p style={styles.error}>{error}</p>}
-      
-      {/* Display QR code */}
+
+      {error && (
+        <p style={styles.error} aria-live="assertive">
+          {error}
+        </p>
+      )}
+
+      {message && (
+        <p style={styles.message} aria-live="polite">
+          {message}
+        </p>
+      )}
+
       {qrCodeUrl && !message && (
-    <div>
-        <img src={qrCodeUrl} alt="QR Code" style={styles.qrCode} />
-    </div>
-)}
-
-
-      {/* Show error message if image fails to load */}
-      {imgError && <p style={styles.error}>Failed to load QR code image.</p>}
+        <div>
+          {imageLoading && <p>Loading QR code...</p>}
+          {!imgError ? (
+            <img
+              src={qrCodeUrl}
+              alt="QR Code"
+              style={styles.qrCode}
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+            />
+          ) : (
+            <p style={styles.error}>Failed to load QR code image.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
