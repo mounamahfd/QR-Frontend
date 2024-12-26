@@ -12,9 +12,6 @@ export default function Home() {
   const [imgError, setImgError] = useState(false); // Track if the image failed to load
 
   // Backend URL (update for production or testing purposes)
-  const backendUrl =
-    process.env.NEXT_PUBLIC_BACKEND_URL || "https://qr-backend-2.onrender.com"; // Use deployed URL
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -22,9 +19,12 @@ export default function Home() {
     setMessage(""); // Reset the message
 
     try {
-      const response = await axios.post(`${backendUrl}/generate-qr/`, {
-        url: url,
-      });
+      const response = await axios.post(
+        "https://qr-backend-2.onrender.com/generate-qr/",
+        {
+          url: url,
+        }
+      );
 
       console.log("Response:", response.data);
 
