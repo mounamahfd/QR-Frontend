@@ -11,6 +11,10 @@ export default function Home() {
   const [message, setMessage] = useState(""); // For handling existing QR code messages
   const [imgError, setImgError] = useState(false); // Track if the image failed to load
 
+  // Backend URL (update for production or testing purposes)
+  const backendUrl =
+    process.env.NEXT_PUBLIC_BACKEND_URL || "http://10.17.16.174:8000"; // Use local IP for testing
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -18,7 +22,7 @@ export default function Home() {
     setMessage(""); // Reset the message
 
     try {
-      const response = await axios.post("http://localhost:8000/generate-qr/", {
+      const response = await axios.post(`${backendUrl}/generate-qr/`, {
         url: url,
       });
 
@@ -66,7 +70,6 @@ export default function Home() {
       {error && <p style={styles.error}>{error}</p>}
 
       {/* Display QR code */}
-      {/* Display QR code and message */}
       {qrCodeUrl && (
         <div>
           <img
@@ -75,8 +78,7 @@ export default function Home() {
             style={styles.qrCode}
             onError={handleImageError} // Handle image load errors
           />
-          {message && <p style={styles.message}>{message}</p>}{" "}
-          {/* Display message if available */}
+          {message && <p style={styles.message}>{message}</p>}
         </div>
       )}
 
