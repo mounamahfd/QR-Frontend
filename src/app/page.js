@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import axios from "axios";
 
@@ -13,7 +11,7 @@ export default function Home() {
 
   // Backend URL (update for production or testing purposes)
   const backendUrl =
-    process.env.NEXT_PUBLIC_BACKEND_URL || "http://10.17.16.174:8000"; // Use local IP for testing
+    process.env.NEXT_PUBLIC_BACKEND_URL || "https://qr-backend-2.onrender.com"; // Use deployed URL
 
   const handleSubmit = async (e) => {
     e.preventDefault();
