@@ -52,7 +52,6 @@ export default function Home() {
           type="text"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          
           placeholder="e.g., https://example.com"
           style={styles.input}
         />
