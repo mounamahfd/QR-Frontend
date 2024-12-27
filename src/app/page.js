@@ -12,7 +12,7 @@ export default function Home() {
   const [imgError, setImgError] = useState(false);
 
   const BACKEND_URL =
-    process.env.NEXT_PUBLIC_BACKEND_URL || "https://qr-backend-2.onrender.com";
+    process.env.NEXT_PUBLIC_BACKEND_URL || "https://qr-backend-3.onrender.com";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
