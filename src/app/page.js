@@ -52,6 +52,7 @@ export default function Home() {
           type="text"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
+          
           placeholder="e.g., https://example.com"
           style={styles.input}
         />
@@ -62,7 +63,6 @@ export default function Home() {
 
       {error && <p style={styles.error}>{error}</p>}
       {message && <p style={styles.message}>{message}</p>}
-
       {qrCodeUrl && !imgError && (
         <img
           src={qrCodeUrl}
